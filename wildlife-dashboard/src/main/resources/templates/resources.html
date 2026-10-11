@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resource Management</title>
+    <style>
+
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--paper:#fff;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{position:relative;overflow:hidden;padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1{margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15}
+main{width:min(100% - 40px,1240px);margin:36px auto 52px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+.button,button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:10px;padding:12px 17px;background:linear-gradient(135deg,var(--forest),#245d48);color:#fff;text-decoration:none;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+.button:hover,button:hover{background:linear-gradient(135deg,#102f28,#1b4938);transform:translateY(-1px);box-shadow:0 6px 16px rgba(16,47,40,.16)}
+.button.secondary{background:#e6eee7;color:var(--forest);border-color:#d5e2d7}
+.button.secondary:hover{background:#dce8de}
+.table-container{background:#fff;border:1px solid rgba(35,71,54,.08);border-radius:18px;padding:18px;box-shadow:0 12px 34px rgba(27,58,43,.07);overflow-x:auto}
+table{width:100%;min-width:760px;border-collapse:collapse;background:#fff}
+th,td{padding:14px 13px;border-bottom:1px solid #e8eee9;text-align:left;font-size:.91rem;vertical-align:middle}
+th{background:#edf3ed;color:#294d3a;font-weight:700;white-space:nowrap}
+tbody tr:hover{background:#f8fbf8}
+tbody tr:last-child td{border-bottom:0}
+.edit{display:inline-flex;align-items:center;padding:8px 12px;border-radius:8px;background:#e2edff;color:#174ea6;text-decoration:none;font-weight:700}
+.edit:hover{background:#cfe0ff}
+.delete{display:inline-flex;align-items:center;padding:8px 12px;border:0;border-radius:8px;background:#ffe8e8;color:#b42318;text-decoration:none;font-weight:700;cursor:pointer}
+.delete:hover{background:#ffd3d3;color:#8f1d16}
+@media(max-width:600px){header{padding:25px 22px 28px}main{width:calc(100% - 28px);margin:24px auto 36px}.table-container{padding:10px;border-radius:14px}.actions{gap:9px}.button{padding:11px 13px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+</style>
+</head>
+<body>
+
+
+<header><h1>Resource Management</h1></header>
+<main>
+  <div class="actions">
+    <a href="/resources/add" class="button">+ Add Resource</a>
+    <a href="/" class="button secondary">Back to Dashboard</a>
+  </div>
+  <div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Resource Name</th>
+            <th>Resource Type</th>
+            <th>Quantity</th>
+            <th>Assigned Area</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="resource : ${resources}">
+            <td th:text="${resource.resourceId}"></td>
+            <td th:text="${resource.resourceName}"></td>
+            <td th:text="${resource.resourceType}"></td>
+            <td th:text="${resource.quantity}"></td>
+            <td th:text="${resource.assignedArea}"></td>
+            <td th:text="${resource.status}"></td>
+            <td>
+                <a th:href="@{/resources/edit/{id}(id=${resource.resourceId})}">
+                    Edit
+                </a>
+                <a class="delete"
+                   th:href="@{/resources/delete/{id}(id=${resource.resourceId})}"
+                   onclick="return confirm('Delete this resource?')">
+                    Delete
+                </a>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(resources)}">
+            <td colspan="7">No resources found.</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+
+</main>
+</body>
+</html>

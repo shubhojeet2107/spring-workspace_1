@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Animal</title>
+
+    <style>
+
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--paper:#fff;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{position:relative;overflow:hidden;padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1,h1{position:relative;z-index:1;margin:0;color:#fff;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15}
+main,.container{width:min(100% - 40px,720px);margin:36px auto 52px;padding:30px 34px 32px}
+h2{color:var(--forest);letter-spacing:-.025em}
+form,.form-card,main{background:#fff;border:1px solid rgba(35,71,54,.08);border-radius:20px;box-shadow:0 12px 34px rgba(27,58,43,.08)}
+form{width:100%;margin:0 auto;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none}
+label{display:block;margin:20px 0 8px;color:#31483c;font-size:.9rem;font-weight:700}
+input,textarea,select{display:block;width:100%;min-height:48px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcfa;color:var(--ink);font:inherit;font-size:.95rem}
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+button,.button,a.button,.back,form a{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;padding:12px 18px;border:1px solid transparent;border-radius:10px;background:linear-gradient(135deg,var(--forest-dark),var(--forest) 70%,#2b6049);color:#fff;text-decoration:none;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+button:hover,.button:hover,a.button:hover,.back:hover,form a:hover{background:linear-gradient(135deg,#0b2821,#245d48);transform:translateY(-1px);box-shadow:0 7px 16px rgba(16,47,40,.16)}
+form a,.back{margin-left:8px;background:#e8f0e9;color:var(--forest);border-color:#d6e3d8}
+form a:hover,.back:hover{background:#dce9de;color:var(--forest)}
+@media(max-width:600px){header{padding:25px 22px 28px}main,.container{width:calc(100% - 28px);margin:24px auto 36px}form{padding:23px 22px 25px;border-radius:17px}button,form a,.back{width:100%;margin-left:0}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Edit Animal</h1>
+</header>
+
+<main>
+
+    <form th:action="@{/animals/edit/{id}(id=${animal['animalId']})}"
+          method="post">
+
+        <label for="speciesName">Species Name</label>
+        <input id="speciesName"
+               name="speciesName"
+               type="text"
+               th:value="${animal['speciesName']}"
+               required>
+
+        <label for="identificationCode">Identification Code</label>
+        <input id="identificationCode"
+               name="identificationCode"
+               type="text"
+               th:value="${animal['identificationCode']}"
+               required>
+
+        <label for="age">Age</label>
+        <input id="age"
+               name="age"
+               type="number"
+               min="0"
+               th:value="${animal['age']}"
+               required>
+
+        <label for="healthStatus">Health Status</label>
+        <input id="healthStatus"
+               name="healthStatus"
+               type="text"
+               th:value="${animal['healthStatus']}"
+               required>
+
+        <label for="location">Location</label>
+        <input id="location"
+               name="location"
+               type="text"
+               th:value="${animal['location']}"
+               required>
+
+        <button type="submit">Update Animal</button>
+
+        <a th:href="@{/animals}">Cancel</a>
+
+    </form>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Incident</title>
+<style>
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--paper:#fff;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.34),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{position:relative;overflow:hidden;padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header:after{content:"";position:absolute;width:250px;height:250px;right:8%;top:-155px;border:1px solid rgba(255,255,255,.13);border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025);pointer-events:none}
+.header-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto}
+header h1{margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15}
+main{width:min(100% - 40px,760px);margin:42px auto 56px}
+.form-card{overflow:hidden;background:var(--paper);border:1px solid rgba(35,71,54,.09);border-radius:22px;box-shadow:0 20px 55px rgba(27,58,43,.09),0 3px 10px rgba(27,58,43,.035)}
+.card-heading{padding:30px 34px 24px;border-bottom:1px solid #edf1ed}
+.card-heading h2{margin:0;font-size:1.22rem;letter-spacing:-.02em}
+form{padding:28px 34px 32px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 20px}
+.field{min-width:0}.field.full-width{grid-column:1/-1}
+label{display:block;margin:0 0 8px;font-size:.88rem;font-weight:700;color:#31483c}
+input,textarea,select{display:block;width:100%;min-height:49px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcfa;color:var(--ink);font:inherit;font-size:.94rem;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+textarea{min-height:110px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+.form-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:30px;padding-top:24px;border-top:1px solid #edf1ed}
+button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 22px;border:0;border-radius:10px;background:var(--forest);color:#fff;font:inherit;font-size:.93rem;font-weight:700;cursor:pointer;box-shadow:0 5px 12px rgba(23,63,53,.16);transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
+button:after{content:"→";font-size:1.15rem;line-height:1}button:hover{background:#245d48;transform:translateY(-1px);box-shadow:0 8px 18px rgba(23,63,53,.2)}
+.back-link{display:inline-flex;align-items:center;gap:9px;color:var(--leaf);font-size:.9rem;font-weight:700;text-decoration:none}.back-link:before{content:"←";font-size:1.1rem}.back-link:hover{color:var(--forest-dark);text-decoration:underline;text-underline-offset:4px}
+button:focus-visible,a:focus-visible{outline:3px solid #9bc7a6;outline-offset:3px}
+@media(max-width:600px){header{padding:25px 22px 28px}main{width:min(100% - 28px,760px);margin:24px auto 36px}.form-card{border-radius:17px}.card-heading{padding:24px 22px 20px}form{padding:23px 22px 25px}.fields{grid-template-columns:1fr;gap:19px}.field.full-width{grid-column:auto}.form-actions{align-items:stretch;flex-direction:column-reverse}button{width:100%}.back-link{justify-content:center;padding:8px 0}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><h1>Register Incident</h1></div></header>
+<main>
+    <section class="form-card" aria-labelledby="form-title">
+    <div class="card-heading"><h2 id="form-title">Incident information</h2></div>
+    <form th:action="@{/incidents/add}" method="post">
+        <div class="fields">
+        <div class="field"><label for="incidentType">Incident Type</label>
+        <input id="incidentType" name="incidentType" minlength="2" maxlength="80" required></div>
+
+        <div class="field full-width"><label for="description">Description</label>
+        <textarea id="description" name="description" rows="3" minlength="10" maxlength="1000" required></textarea></div>
+
+        <div class="field"><label for="location">Location</label>
+        <input id="location" name="location" minlength="2" maxlength="160" required></div>
+
+        <div class="field"><label for="incidentDate">Incident Date</label>
+        <input id="incidentDate" name="incidentDate" type="date" required></div>
+
+        <div class="field"><label for="severity">Severity</label>
+        <select id="severity" name="severity" required>
+            <option value="">Select severity</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+        </select></div>
+
+        <div class="field"><label for="status">Status</label>
+        <select id="status" name="status" required>
+            <option value="">Select status</option>
+            <option value="Reported">Reported</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+        </select></div>
+        </div>
+        <div class="form-actions"><a class="back-link" th:href="@{/incidents}">Back to Incidents</a>
+        <button type="submit">Save Incident</button></div>
+    </form>
+<script>
+function validateIncidentDate() {
+  const field = document.getElementById("incidentDate");
+  if (field && field.value) {
+    const selected = new Date(field.value + "T00:00:00");
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (selected > today) { field.setCustomValidity("Incident date cannot be in the future."); field.reportValidity(); field.setCustomValidity(""); return false; }
+  }
+  return true;
+}
+</script>
+    </section>
+</main>
+</body>
+</html>

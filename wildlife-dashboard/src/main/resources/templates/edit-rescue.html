@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Rescue</title>
+    <style>
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1{margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15}
+main{width:min(100% - 40px,760px);margin:38px auto 52px;padding:0}
+form{padding:30px 34px 32px;background:#fff;border:1px solid rgba(35,71,54,.09);border-radius:22px;box-shadow:0 20px 55px rgba(27,58,43,.09)}
+label{display:block;margin:19px 0 8px;color:#31483c;font-size:.9rem;font-weight:700}
+input,select,textarea{display:block;width:100%;min-height:48px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcfa;color:var(--ink);font:inherit;font-size:.95rem;transition:border-color .18s,box-shadow .18s}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+input.touched:invalid,select.touched:invalid,textarea.touched:invalid,form.was-validated input:invalid,form.was-validated select:invalid,form.was-validated textarea:invalid{border-color:#d94a4a;background:#fffafa}
+.field-hint{margin:6px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+button,.button,a.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;background:linear-gradient(135deg,var(--forest),#245d48);color:#fff;text-decoration:none;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s}
+button:hover,.button:hover,a.button:hover{background:linear-gradient(135deg,#102f28,#1d4c3b);transform:translateY(-1px);box-shadow:0 7px 16px rgba(16,47,40,.16)}
+a.back{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:10px;background:#e7efe8;color:var(--forest-dark);text-decoration:none;font-weight:700}
+a.back:hover{background:#d8e6da}
+@media(max-width:600px){header{padding:25px 22px}main{width:calc(100% - 28px);margin:24px auto 36px}form{padding:23px 20px 25px;border-radius:17px}.actions>*{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+</style>
+</head>
+<body>
+<header><h1>Edit Rescue</h1></header>
+<main>
+
+<form th:action="@{/rescues/update/{id}(id=${id})}"
+      th:object="${rescue}" method="post">
+
+    <label>Animal Name</label>
+    <input type="text" th:field="*{animalName}" minlength="2" maxlength="120" required>
+
+    <label>Rescue Date</label>
+    <input type="date" th:field="*{rescueDate}" required>
+
+    <label>Location</label>
+    <input type="text" th:field="*{location}" minlength="2" maxlength="120" required>
+
+    <label>Assigned Staff</label>
+    <input type="text" th:field="*{assignedStaff}" minlength="2" maxlength="120" required>
+
+    <label>Description</label>
+    <textarea th:field="*{description}" rows="4" minlength="5" maxlength="1000" required></textarea>
+
+    <label>Status</label>
+    <select th:field="*{status}" required>
+        <option value="Reported">Reported</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+    </select>
+
+    <div class="actions"><button type="submit">Update Rescue</button>
+    <a class="back" href="/rescues">Cancel and go back</a></div>
+
+</form>
+</main>
+<script>
+(() => {
+ const form = document.querySelector("form");
+ const textFields = form.querySelectorAll("input[type=text], textarea");
+ textFields.forEach(field => { field.maxLength = field.tagName === "TEXTAREA" ? 1000 : 120; field.addEventListener("input", () => { field.setCustomValidity(field.value.trim() ? "" : "Please enter a value without leaving it blank."); }); field.addEventListener("blur", () => { field.classList.add("touched"); field.value = field.value.trim(); field.setCustomValidity(field.value ? "" : "Please enter a value without leaving it blank."); }); });
+ const date = form.querySelector("input[type=date]"); if (date) { date.max = new Date().toISOString().slice(0,10); date.addEventListener("input", () => date.setCustomValidity(date.value && date.value > date.max ? "Date cannot be in the future." : "")); date.addEventListener("blur", () => date.classList.add("touched")); }
+ form.querySelectorAll("input,select,textarea").forEach(field => field.addEventListener("invalid", () => field.classList.add("touched")));
+ form.addEventListener("submit", event => { form.classList.add("was-validated"); textFields.forEach(field => field.setCustomValidity(field.value.trim() ? "" : "Please enter a value without leaving it blank.")); if (!form.checkValidity()) { event.preventDefault(); form.reportValidity(); } });
+})();
+</script>
+</body>
+</html>

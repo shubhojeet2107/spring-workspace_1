@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Staff</title>
+    <style>
+
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--paper:#fff;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{position:relative;overflow:hidden;padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1{position:relative;z-index:1;margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15}
+header p{position:relative;z-index:1;color:#d5e4d9;margin:10px 0 0}
+main,.container{width:min(100% - 40px,1240px);margin:36px auto 52px}
+h2{color:var(--forest);letter-spacing:-.025em}
+.card,.stat-card,.table-container,.form-card{background:#fff;border:1px solid rgba(35,71,54,.08);border-radius:18px;box-shadow:0 12px 34px rgba(27,58,43,.07)}
+button,.button,a.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 16px;background:var(--forest);color:#fff;text-decoration:none;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease}
+button:hover,.button:hover,a.button:hover{background:#245d48;transform:translateY(-1px)}
+a{color:var(--leaf)}
+table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}
+th,td{padding:14px 13px;border-bottom:1px solid #e8eee9;text-align:left;font-size:.91rem;vertical-align:middle}
+th{background:#edf3ed;color:#294d3a;font-weight:700;white-space:nowrap}
+tbody tr:hover{background:#f8fbf8}
+.table-container{padding:18px;overflow-x:auto}
+@media(max-width:600px){header{padding:25px 22px 28px}main,.container{width:calc(100% - 28px);margin:24px auto 36px}.table-container{padding:10px;border-radius:14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+main.container{width:min(100% - 40px,1240px);margin:36px auto 52px}
+form{width:min(100%,665px);margin:0 auto;padding:30px 36px 32px;background:#fff;border:1px solid rgba(35,71,54,.09);border-radius:22px;box-shadow:0 20px 55px rgba(27,58,43,.09)}
+header h1{color:#fff}
+.secondary-button{background:#e8f0e9;color:var(--forest);border:1px solid #d5e3d7}
+.secondary-button:hover{background:#dce9de;color:var(--forest)}
+label{display:block;margin:20px 0 8px;color:#31483c;font-size:.88rem;font-weight:700}
+input{display:block;width:100%;min-height:49px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcfa;color:var(--ink);font:inherit;font-size:.94rem}
+input:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+form button{margin-top:26px}
+form p{margin-top:20px}
+@media(max-width:600px){main.container{width:calc(100% - 28px);margin:24px auto 36px}form{padding:23px 22px 25px;border-radius:17px}form button,.secondary-button{width:100%}}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Add Staff</h1>
+</header>
+
+<main class="container">
+<form th:action="@{/staff/save}" th:object="${staff}" method="post">
+
+    <label>Staff Name</label>
+    <input type="text" th:field="*{staffName}" required>
+
+    <label>Role</label>
+    <input type="text" th:field="*{role}" required>
+
+    <label>Phone</label>
+    <input type="text" th:field="*{phone}" required>
+
+    <label>Email</label>
+    <input type="email" th:field="*{email}" required>
+
+    <label>Assigned Area</label>
+    <input type="text" th:field="*{assignedArea}" required>
+
+    <button type="submit">Save Staff</button>
+    <p><a class="button secondary-button" href="/staff">Cancel and go back</a></p>
+
+</form>
+</main>
+
+</body>
+</html>

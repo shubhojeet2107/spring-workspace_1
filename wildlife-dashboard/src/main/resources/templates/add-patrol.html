@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule New Patrol</title>
+
+    <style>
+
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--paper:#fff;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{position:relative;overflow:hidden;padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1{margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15;color:#fff}
+header p{color:#d5e4d9;margin:10px 0 0}
+main,.container{width:min(100% - 40px,1240px);margin:36px auto 52px}
+h1,h2{color:var(--forest);letter-spacing:-.025em} header h1{color:#fff}
+.card,.stat-card,.table-container,.form-card,form{background:#fff;border:1px solid rgba(35,71,54,.08);border-radius:18px;box-shadow:0 12px 34px rgba(27,58,43,.07)}
+button,.button,a.button,.back{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 16px;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 65%,#2b6049);color:#fff;text-decoration:none;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease}
+button:hover,.button:hover,a.button:hover,.back:hover{background:#245d48;transform:translateY(-1px)}
+a{color:var(--leaf)}
+table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}
+th,td{padding:14px 13px;border-bottom:1px solid #e8eee9;text-align:left;font-size:.91rem;vertical-align:middle}
+th{background:#edf3ed;color:#294d3a;font-weight:700;white-space:nowrap}
+tbody tr:hover{background:#f8fbf8}
+.table-container{padding:18px;overflow-x:auto}
+.edit{display:inline-flex;padding:8px 12px;background:#e2edff;color:#174ea6;border-radius:8px;text-decoration:none;font-weight:700}
+.delete{display:inline-flex;padding:8px 12px;background:#ffe8e8;color:#b42318;border-radius:8px;text-decoration:none;font-weight:700;border:0}
+.edit:hover{background:#cfe0ff}.delete:hover{background:#ffd3d3;color:#8f1d16}
+form{width:min(100%,650px);margin:0 auto;padding:30px 34px 32px}
+label{display:block;margin:20px 0 8px;color:#31483c;font-size:.9rem;font-weight:700}
+input,textarea,select{display:block;width:100%;min-height:46px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcfa;color:var(--ink);font:inherit;font-size:.94rem}
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+.validation-message{display:none;color:#a12626;font-size:.82rem;margin:6px 0 0}.field-invalid .validation-message{display:block}
+input.field-error,textarea.field-error,select.field-error{border-color:var(--leaf);box-shadow:0 0 0 2px rgba(63,121,91,.12)}
+.success{color:#236b43;font-weight:700;padding:12px 14px;background:#e8f4eb;border-radius:10px}.error{color:#a12626;font-weight:700;padding:12px 14px;background:#fff0f0;border-radius:10px}
+@media(max-width:600px){header{padding:25px 22px 28px}main,.container{width:calc(100% - 28px);margin:24px auto 36px}form{padding:23px 22px 25px;border-radius:17px}form button{width:100%}.table-container{padding:10px;border-radius:14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+body>h1,body>p{width:min(100% - 40px,650px);margin-left:auto;margin-right:auto}body>h1{margin-top:36px}body>p{color:var(--muted)}form button{margin-top:26px}form .back{margin-top:26px;margin-left:8px}
+</style>
+</head>
+
+<body>
+
+<h1>Schedule New Patrol</h1>
+
+<form th:action="@{/patrols/save}"
+      th:object="${patrol}"
+      method="post">
+
+    <label for="patrolDate">Patrol Date</label>
+    <input type="date"
+           id="patrolDate"
+           th:field="*{patrolDate}"
+           required>
+
+    <label for="staffName">Assigned Staff</label>
+    <input type="text"
+           id="staffName"
+           th:field="*{staffName}"
+           placeholder="Enter staff name"
+           required>
+
+    <label for="patrolTeam">Patrol Team</label>
+    <input type="text"
+           id="patrolTeam"
+           th:field="*{patrolTeam}"
+           placeholder="Example: Team Alpha"
+           required>
+
+    <label for="protectedArea">Protected Area</label>
+    <input type="text"
+           id="protectedArea"
+           th:field="*{protectedArea}"
+           placeholder="Enter protected area"
+           required>
+
+    <label for="route">Patrol Route</label>
+    <input type="text"
+           id="route"
+           th:field="*{route}"
+           placeholder="Example: Western Zone - Route A"
+           required>
+
+    <label for="activityDetails">Activity Details</label>
+    <textarea id="activityDetails"
+              th:field="*{activityDetails}"
+              rows="4"
+              placeholder="Describe wildlife monitoring, water inspection, or other activities"></textarea>
+
+    <label for="status">Patrol Status</label>
+    <select id="status"
+            th:field="*{status}"
+            required>
+        <option value="">Select status</option>
+        <option value="Scheduled">Scheduled</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+    </select>
+
+    <button type="submit">Save Patrol</button>
+    <a class="back" th:href="@{/patrols}">Cancel</a>
+
+</form>
+
+
+<script>
+(function(){
+ const form=document.querySelector('form'); if(!form) return;
+ const controls=[...form.querySelectorAll('input:not([readonly]), textarea, select')];
+ const mark=(el,show)=>{el.classList.toggle('field-error',!!show);const wrap=el.closest('.field-wrap');if(wrap)wrap.classList.toggle('field-invalid',!!show);};
+ controls.forEach(el=>{
+   el.addEventListener('input',()=>{if(el.dataset.touched==='1') mark(el,!el.checkValidity());});
+   el.addEventListener('change',()=>{el.dataset.touched='1';mark(el,!el.checkValidity());});
+   el.addEventListener('blur',()=>{el.dataset.touched='1';mark(el,!el.checkValidity());});
+ });
+ form.addEventListener('submit',e=>{
+   let first=null;
+   controls.forEach(el=>{el.dataset.touched='1';const bad=!el.checkValidity() || ((el.type==='text'||el.tagName==='TEXTAREA') && el.required && !el.value.trim());mark(el,bad);if(bad&&!first)first=el;});
+   const date=form.querySelector('input[type="date"]');
+   if(date && date.value){const selected=new Date(date.value+'T00:00:00');if(Number.isNaN(selected.getTime())){mark(date,true);first=first||date;}}
+   if(first){e.preventDefault();first.focus();first.reportValidity();}
+ });
+})();
+</script>
+
+</body>
+</html>

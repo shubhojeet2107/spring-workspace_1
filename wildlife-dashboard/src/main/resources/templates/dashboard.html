@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wildlife Conservation Dashboard</title>
+
+    <style>
+
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--paper:#fff;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{position:relative;overflow:hidden;padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1{margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15;color:#fff}
+header p{color:#d5e4d9;margin:10px 0 0}
+main,.container{width:min(100% - 40px,1240px);margin:36px auto 52px}
+h1,h2{color:var(--forest);letter-spacing:-.025em} header h1{color:#fff}
+.card,.stat-card,.table-container,.form-card,form{background:#fff;border:1px solid rgba(35,71,54,.08);border-radius:18px;box-shadow:0 12px 34px rgba(27,58,43,.07)}
+button,.button,a.button,.back{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 16px;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 65%,#2b6049);color:#fff;text-decoration:none;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease}
+button:hover,.button:hover,a.button:hover,.back:hover{background:#245d48;transform:translateY(-1px)}
+a{color:var(--leaf)}
+table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}
+th,td{padding:14px 13px;border-bottom:1px solid #e8eee9;text-align:left;font-size:.91rem;vertical-align:middle}
+th{background:#edf3ed;color:#294d3a;font-weight:700;white-space:nowrap}
+tbody tr:hover{background:#f8fbf8}
+.table-container{padding:18px;overflow-x:auto}
+.edit{display:inline-flex;padding:8px 12px;background:#e2edff;color:#174ea6;border-radius:8px;text-decoration:none;font-weight:700}
+.delete{display:inline-flex;padding:8px 12px;background:#ffe8e8;color:#b42318;border-radius:8px;text-decoration:none;font-weight:700;border:0}
+.edit:hover{background:#cfe0ff}.delete:hover{background:#ffd3d3;color:#8f1d16}
+form{width:min(100%,650px);margin:0 auto;padding:30px 34px 32px}
+label{display:block;margin:20px 0 8px;color:#31483c;font-size:.9rem;font-weight:700}
+input,textarea,select{display:block;width:100%;min-height:46px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcfa;color:var(--ink);font:inherit;font-size:.94rem}
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+.validation-message{display:none;color:#a12626;font-size:.82rem;margin:6px 0 0}.field-invalid .validation-message{display:block}
+input.field-error,textarea.field-error,select.field-error{border-color:var(--leaf);box-shadow:0 0 0 2px rgba(63,121,91,.12)}
+.success{color:#236b43;font-weight:700;padding:12px 14px;background:#e8f4eb;border-radius:10px}.error{color:#a12626;font-weight:700;padding:12px 14px;background:#fff0f0;border-radius:10px}
+@media(max-width:600px){header{padding:25px 22px 28px}main,.container{width:calc(100% - 28px);margin:24px auto 36px}form{padding:23px 22px 25px;border-radius:17px}form button{width:100%}.table-container{padding:10px;border-radius:14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+header p{position:relative;z-index:1}main{padding:0}.stats-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px;margin:20px 0 38px}.stat-card{padding:22px;border-left:4px solid var(--leaf)}.stat-card h3{margin:0;color:#4a6153;font-size:.92rem;font-weight:650}.stat-card p{font-size:2rem;font-weight:800;letter-spacing:-.04em;color:var(--forest);margin:14px 0 0}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:18px}.card{padding:24px;transition:transform .18s ease,box-shadow .18s ease}.card:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(27,58,43,.1)}.card h3{color:var(--forest);margin:0 0 10px}.card p{line-height:1.6;color:#617166}.card a{margin-top:8px;display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:10px;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 65%,#2b6049);color:#fff;text-decoration:none;font-weight:700;font-size:.9rem;transition:background .18s ease,transform .18s ease}.card a:hover{background:#245d48;transform:translateY(-1px)}footer{text-align:center;padding:22px;color:#718078}
+
+</style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Wildlife Conservation</h1>
+        <p>Smart Wildlife Conservation &amp; Protected Area Management</p>
+    </header>
+
+    <main>
+
+        <h2>Management Dashboard</h2>
+        <p>Monitor and manage conservation activities.</p>
+
+        <!-- Conservation Statistics -->
+        <h2>Conservation Overview</h2>
+
+        <div class="stats-container">
+
+            <div class="stat-card">
+                <h3>Total Animals</h3>
+                <p th:text="${animals == null ? 'N/A' : (animals == -1 ? 'Unavailable' : animals)}">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Protected Areas</h3>
+                <p th:text="${areas == null ? 'N/A' : (areas == -1 ? 'Unavailable' : areas)}">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Incidents</h3>
+                <p th:text="${incidents == null ? 'N/A' : (incidents == -1 ? 'Unavailable' : incidents)}">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Patrols</h3>
+                <p th:text="${patrols == null ? 'N/A' : (patrols == -1 ? 'Unavailable' : patrols)}">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Rescue Cases</h3>
+                <p th:text="${rescues == null ? 'N/A' : (rescues == -1 ? 'Unavailable' : rescues)}">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Staff Members</h3>
+                <p th:text="${staff == null ? 'N/A' : (staff == -1 ? 'Unavailable' : staff)}">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Resources</h3>
+                <p th:text="${resources == null ? 'N/A' : (resources == -1 ? 'Unavailable' : resources)}">0</p>
+            </div>
+			
+			<div class="stat-card">
+			    <h3>Conservation Programmes</h3>
+			    <p th:text="${programmes == -1 ? 'Unavailable' : programmes}">0</p>
+			</div>
+			
+			<div class="stat-card">
+			    <h3>Habitats & Zones</h3>
+			    <p th:text="${habitats == -1 ? 'Unavailable' : habitats}">0</p>
+			</div>
+
+        </div>
+
+        <!-- Management Modules -->
+        <h2>Management Modules</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Wildlife Management</h3>
+                <p>Manage animal records and wildlife information.</p>
+                <a href="/animals">Manage Animals</a>
+            </div>
+
+            <div class="card">
+                <h3>Protected Areas</h3>
+                <p>Manage forests and protected locations.</p>
+                <a href="/protected-areas">Manage Protected Areas</a>
+            </div>
+
+            <div class="card">
+                <h3>Incident Management</h3>
+                <p>Track wildlife incidents and reports.</p>
+                <a href="/incidents">Manage Incidents</a>
+            </div>
+
+            <div class="card">
+                <h3>Patrol Management</h3>
+                <p>Plan and monitor wildlife patrol activities.</p>
+                <a href="/patrols">Manage Patrols</a>
+            </div>
+
+            <div class="card">
+                <h3>Rescue Management</h3>
+                <p>Record and manage wildlife rescue operations.</p>
+                <a href="/rescues">Manage Rescues</a>
+            </div>
+
+            <div class="card">
+                <h3>Staff Management</h3>
+                <p>Manage conservation staff and assignments.</p>
+                <a href="/staff">Manage Staff</a>
+            </div>
+
+            <div class="card">
+                <h3>Resource Management</h3>
+                <p>Track equipment, supplies, and resource availability.</p>
+                <a href="/resources">Manage Resources</a>
+            </div>
+			
+			
+			<div class="card">
+			    <h3>Conservation Programmes</h3>
+			    <p>Manage conservation activities, targets and progress.</p>
+			    <a href="/conservation-programmes">Manage Programmes</a>
+			</div>
+			
+			<div class="card">
+			    <h3>Habitat & Zone Management</h3>
+			    <p>Manage protected-area zones, habitats, water resources and geographic details.</p>
+			    <a href="/habitats">Manage Habitats</a>
+			</div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        Smart Wildlife Conservation System
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Management</title>
+
+    <style>
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--ink:#20342d;--muted:#718078;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1{margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15}
+main,.container{width:min(100% - 40px,1240px);margin:30px auto 52px}
+h2{color:var(--forest);letter-spacing:-.025em;margin-top:28px}
+p{line-height:1.6;color:#617166}
+button,.button,a.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 16px;background:linear-gradient(135deg,var(--forest),#245d48);color:#fff;text-decoration:none;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease}
+button:hover,.button:hover,a.button:hover{background:linear-gradient(135deg,#102f28,#1b4938);transform:translateY(-1px)}
+a{color:var(--leaf)}
+.table-container{overflow-x:auto;background:#fff;border:1px solid rgba(35,71,54,.08);border-radius:18px;padding:18px;box-shadow:0 12px 34px rgba(27,58,43,.07);margin-top:20px}
+table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}
+th,td{padding:14px 13px;border-bottom:1px solid #e8eee9;text-align:left;font-size:.91rem;vertical-align:middle}
+th{background:#edf3ed;color:#294d3a;font-weight:700;white-space:nowrap}
+tbody tr:hover{background:#f8fbf8}
+.edit{display:inline-flex;padding:8px 12px;background:#e5efe8;color:#173f35;border-radius:8px;text-decoration:none;font-weight:700}
+.delete{display:inline-flex;padding:8px 12px;background:#fff0ef;color:#a12626;border-radius:8px;text-decoration:none;font-weight:700}
+.edit:hover{background:#d5e6da}.delete:hover{background:#ffe0dd}
+@media(max-width:600px){header{padding:25px 22px 28px}main,.container{width:calc(100% - 28px);margin:24px auto 36px}.table-container{padding:10px;border-radius:14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+.filter-form{background:#fff;padding:22px;border:1px solid rgba(35,71,54,.08);border-radius:18px;margin:18px 0 26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;box-shadow:0 12px 34px rgba(27,58,43,.06)}
+.filter-form label{display:block;margin-bottom:7px;font-weight:700;font-size:.9rem;color:#31483c}
+input,select{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fbfcfa;color:var(--ink);font:inherit}
+input:focus,select:focus{outline:none;border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+.filter-actions{display:flex;align-items:end;gap:10px;flex-wrap:wrap}
+.reset{background:#e7eee8!important;color:#173f35!important}
+.results{font-weight:700;color:var(--forest);margin-top:22px}
+@media(max-width:600px){.filter-form{padding:16px}.filter-actions button,.filter-actions a{width:100%}}
+.page-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+    </style>
+</head>
+
+<body>
+<header><h1>Incident Management</h1></header>
+<main>
+    <div class="page-actions">
+    <a href="/incidents/add" class="button">+ Add Incident</a>
+    <a href="/" class="button">Back to Dashboard</a>
+    </div>
+
+    <h2>Filter Incidents</h2>
+
+    <form action="/incidents" method="get" class="filter-form">
+
+        <div>
+            <label for="location">Location / Protected Area</label>
+            <input type="text" id="location" name="location"
+                   th:value="${location}"
+                   placeholder="Enter location">
+        </div>
+
+        <div>
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" name="startDate"
+                   th:value="${startDate}">
+        </div>
+
+        <div>
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" name="endDate"
+                   th:value="${endDate}">
+        </div>
+
+        <div>
+            <label for="severity">Severity</label>
+            <select id="severity" name="severity">
+                <option value="">All Severities</option>
+                <option value="Low"
+                        th:selected="${severity == 'Low'}">Low</option>
+                <option value="Medium"
+                        th:selected="${severity == 'Medium'}">Medium</option>
+                <option value="High"
+                        th:selected="${severity == 'High'}">High</option>
+                <option value="Critical"
+                        th:selected="${severity == 'Critical'}">Critical</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">All Statuses</option>
+                <option value="Reported"
+                        th:selected="${status == 'Reported'}">Reported</option>
+                <option value="In Progress"
+                        th:selected="${status == 'In Progress'}">In Progress</option>
+                <option value="Under Investigation"
+                        th:selected="${status == 'Under Investigation'}">Under Investigation</option>
+                <option value="Resolved"
+                        th:selected="${status == 'Resolved'}">Resolved</option>
+                <option value="Closed"
+                        th:selected="${status == 'Closed'}">Closed</option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit">Search Incidents</button>
+            <a href="/incidents" class="button reset">Clear Filters</a>
+        </div>
+
+    </form>
+
+    <p class="results">
+        Matching incidents: <span th:text="${#lists.size(incidents)}">0</span>
+    </p>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Incident Type</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="incident : ${incidents}">
+                    <td th:text="${incident.incidentId}"></td>
+                    <td th:text="${incident.incidentType}"></td>
+                    <td th:text="${incident.description}"></td>
+                    <td th:text="${incident.location}"></td>
+                    <td th:text="${incident.incidentDate}"></td>
+                    <td th:text="${incident.severity}"></td>
+                    <td th:text="${incident.status}"></td>
+
+                    <td>
+                        <a th:href="@{/incidents/edit/{id}(id=${incident.incidentId})}">
+                            Edit
+                        </a>
+
+                        <a class="delete"
+                           th:href="@{/incidents/delete/{id}(id=${incident.incidentId})}"
+                           onclick="return confirm('Delete this incident?')">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(incidents)}">
+                    <td colspan="8">No matching incidents found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+<script>
+(() => {
+  const form = document.querySelector(".filter-form");
+  const start = document.getElementById("startDate");
+  const end = document.getElementById("endDate");
+  const location = document.getElementById("location");
+  if (!form || !start || !end) return;
+  const validateDates = () => {
+    end.setCustomValidity(start.value && end.value && end.value < start.value ? "End date must be on or after the start date." : "");
+  };
+  start.addEventListener("change", validateDates);
+  end.addEventListener("change", validateDates);
+  form.addEventListener("submit", (event) => {
+    validateDates();
+    if (location && location.value.trim().length > 120) {
+      location.setCustomValidity("Location must be 120 characters or fewer.");
+    } else if (location) {
+      location.setCustomValidity("");
+    }
+    if (!form.reportValidity()) event.preventDefault();
+  });
+  if (location) location.addEventListener("input", () => location.setCustomValidity(""));
+})();
+</script>
+</body>
+</html>

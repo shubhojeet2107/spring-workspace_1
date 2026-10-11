@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitat & Zone Management</title>
+
+    <style>
+        :root {
+            --forest: #173f35;
+            --forest-dark: #102f28;
+            --leaf: #3f795b;
+            --ink: #20342d;
+            --muted: #718078;
+            --line: #dce5df;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--ink);
+            background: radial-gradient(ellipse at 12% 12%, rgba(173,203,174,.28), transparent 34%),
+                        linear-gradient(135deg, #f3f6f0 0%, #eaf1e9 55%, #f7f8f4 100%);
+        }
+        header {
+            padding: 28px max(24px, calc((100% - 1240px) / 2));
+            color: #fff;
+            background: linear-gradient(115deg, var(--forest-dark), var(--forest) 62%, #2b6049);
+        }
+        header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            line-height: 1.15;
+            letter-spacing: -.04em;
+        }
+        main, .container { width: min(100% - 40px, 1240px); margin: 32px auto 48px; }
+        .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            text-decoration: none;
+            font: inherit;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
+        }
+        .button:hover { transform: translateY(-1px); }
+        .add { color: #fff; background: linear-gradient(135deg, var(--forest), #245d48); box-shadow: 0 5px 12px rgba(23,63,53,.12); }
+        .add:hover { background: var(--forest-dark); }
+        .back { color: var(--forest); background: #e7efe8; border-color: #d4e2d7; }
+        .back:hover { background: #dce9de; }
+        .edit { color: #174ea6; background: #e2edff; }
+        .edit:hover { background: #cfe0ff; }
+        .delete { color: #b42318; background: #ffe8e8; }
+        .delete:hover { background: #ffd3d3; }
+        .table-container {
+            background: #fff;
+            padding: 18px;
+            border: 1px solid rgba(35,71,54,.08);
+            border-radius: 18px;
+            overflow-x: auto;
+            box-shadow: 0 12px 34px rgba(27,58,43,.07);
+        }
+        table { width: 100%; min-width: 1000px; border-collapse: collapse; background: #fff; }
+        th, td { padding: 14px 13px; border-bottom: 1px solid #e8eee9; text-align: left; font-size: .91rem; vertical-align: middle; }
+        th { background: #edf3ed; color: #294d3a; font-weight: 700; white-space: nowrap; }
+        tbody tr:hover { background: #f8fbf8; }
+        tbody tr:last-child td { border-bottom: 0; }
+        .empty { padding: 28px; color: var(--muted); text-align: center; }
+        .error { margin: 0 0 18px; padding: 12px 14px; border: 1px solid #f2caca; border-radius: 10px; background: #fff0f0; color: #a12626; }
+        @media (max-width: 600px) {
+            header { padding: 25px 22px 28px; }
+            main, .container { width: calc(100% - 28px); margin: 24px auto 36px; }
+            .table-container { padding: 10px; border-radius: 14px; }
+            .toolbar .button { flex: 1 1 auto; }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>Habitat &amp; Zone Management</h1>
+</header>
+<main class="container">
+    <div class="toolbar">
+        <a th:href="@{/}" class="button back">Back to Dashboard</a>
+        <a th:href="@{/habitats/add}" class="button add">+ Add Habitat</a>
+    </div>
+
+    <div th:if="${error != null and !#strings.isEmpty(error)}" class="error" th:text="${error}"></div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Protected Area</th>
+                <th>Zone Name</th>
+                <th>Habitat Type</th>
+                <th>Water Resource</th>
+                <th>Geographic Location</th>
+                <th>Area Size</th>
+                <th>Conservation Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="h : ${habitats}">
+                <td th:text="${h.habitatId}"></td>
+                <td th:text="${h.protectedArea}"></td>
+                <td th:text="${h.zoneName}"></td>
+                <td th:text="${h.habitatType}"></td>
+                <td th:text="${h.waterResource}"></td>
+                <td th:text="${h.geographicLocation}"></td>
+                <td th:text="${h.areaSize}"></td>
+                <td th:text="${h.conservationStatus}"></td>
+                <td>
+                    <a th:href="@{/habitats/edit/{id}(id=${h.habitatId})}"
+                       class="button edit">Edit</a>
+
+                    <a th:href="@{/habitats/delete/{id}(id=${h.habitatId})}"
+                       class="button delete"
+                       onclick="return confirm('Delete this habitat record?');">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(habitats)}">
+                <td colspan="9" class="empty">
+                    No habitat records found. Click Add Habitat to create one.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Incident</title>
+    <style>
+
+:root{--forest:#173f35;--forest-dark:#102f28;--leaf:#3f795b;--ink:#20342d;--line:#dce5df;--focus:rgba(63,121,91,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 12% 12%,rgba(173,203,174,.28),transparent 34%),linear-gradient(135deg,#f3f6f0 0%,#eaf1e9 55%,#f7f8f4 100%)}
+header{padding:28px max(24px,calc((100% - 1120px)/2));color:#fff;background:linear-gradient(115deg,var(--forest-dark),var(--forest) 62%,#2b6049)}
+header h1{margin:0;font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;line-height:1.15}
+main{width:min(100% - 40px,720px);margin:36px auto 52px}
+form{padding:30px 34px 32px;background:#fff;border:1px solid rgba(35,71,54,.09);border-radius:22px;box-shadow:0 20px 55px rgba(27,58,43,.09)}
+label{display:block;margin:20px 0 8px;color:#31483c;font-size:.9rem;font-weight:700}
+input,select{display:block;width:100%;min-height:49px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcfa;color:var(--ink);font:inherit;font-size:.95rem}
+input:focus,select:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 4px var(--focus)}
+input:invalid:not(:placeholder-shown),select:invalid{border-color:#c44;background:#fffafa}
+.field-hint{margin:6px 0 0;color:#718078;font-size:.82rem}
+button,.button,a.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;background:var(--forest);color:#fff;text-decoration:none;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease}
+button:hover,.button:hover,a.button:hover{background:#245d48;transform:translateY(-1px)}
+form button{margin-top:26px}
+.back{margin-left:10px;background:#e6eee7;color:var(--forest);display:inline-flex;align-items:center;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+.back:hover{background:#d6e4d9}
+.error-message{display:none;color:#a12626;font-size:.83rem;margin-top:6px}
+@media(max-width:600px){header{padding:25px 22px}main{width:calc(100% - 28px);margin:24px auto 36px}form{padding:23px 22px 25px;border-radius:17px}form button,.back{width:100%;margin-left:0}.back{margin-top:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+</style>
+</head>
+<body>
+<header>
+    <h1>Edit Incident</h1>
+</header>
+<main>
+    <form th:action="@{/incidents/edit/{id}(id=${incident['incidentId']})}" method="post">
+        <label for="incidentType">Incident Type</label>
+        <input id="incidentType" name="incidentType" type="text"
+               th:value="${incident['incidentType']}" required minlength="2" maxlength="80" pattern=".*\S.*" title="Enter an incident type with at least 2 characters.">
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4"
+                  th:text="${incident['description']}" minlength="5" maxlength="1000" required></textarea>
+        <p class="field-hint">Describe the incident in 5–1000 characters.</p>
+
+        <label for="location">Location</label>
+        <input id="location" name="location" type="text"
+               th:value="${incident['location']}" required minlength="2" maxlength="160" pattern=".*\S.*" title="Enter a valid location.">
+
+        <label for="incidentDate">Incident Date</label>
+        <input id="incidentDate" name="incidentDate" type="date"
+               th:value="${incident['incidentDate']}" required>
+        <p class="field-hint">Incident date cannot be in the future.</p>
+
+        <label for="severity">Severity</label>
+        <select id="severity" name="severity" required>
+            <option value="Low" th:selected="${incident['severity'] == 'Low'}">Low</option>
+            <option value="Medium" th:selected="${incident['severity'] == 'Medium'}">Medium</option>
+            <option value="High" th:selected="${incident['severity'] == 'High'}">High</option>
+            <option value="Critical" th:selected="${incident['severity'] == 'Critical'}">Critical</option>
+        </select>
+
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            <option value="Reported" th:selected="${incident['status'] == 'Reported'}">Reported</option>
+            <option value="In Progress" th:selected="${incident['status'] == 'In Progress'}">In Progress</option>
+            <option value="Resolved" th:selected="${incident['status'] == 'Resolved'}">Resolved</option>
+        </select>
+
+        <button type="submit">Update Incident</button>
+        <a class="back" th:href="@{/incidents}">Cancel</a>
+    </form>
+</main>
+<script>
+(() => {
+  const form = document.querySelector('form');
+  const dateField = document.getElementById('incidentDate');
+  const textFields = [document.getElementById('incidentType'), document.getElementById('location')];
+  const description = document.getElementById('description');
+  const today = new Date();
+  const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  dateField.max = localToday;
+  function validateDate() {
+    dateField.setCustomValidity(dateField.value && dateField.value > localToday ? 'Incident date cannot be in the future.' : '');
+  }
+  dateField.addEventListener('change', validateDate);
+  dateField.addEventListener('input', validateDate);
+  textFields.forEach(field => {
+    field.addEventListener('input', () => field.setCustomValidity(''));
+    field.addEventListener('blur', () => {
+      field.setCustomValidity(field.value && !field.value.trim() ? 'This field cannot be empty or only spaces.' : '');
+    });
+  });
+  description.addEventListener('input', () => description.setCustomValidity(''));
+  form.addEventListener('submit', event => {
+    textFields.forEach(field => field.setCustomValidity(!field.value.trim() ? 'This field cannot be empty or only spaces.' : ''));
+    validateDate();
+    if (!form.checkValidity()) { event.preventDefault(); form.reportValidity(); }
+  });
+})();
+</script>
+</body>
+</html>
